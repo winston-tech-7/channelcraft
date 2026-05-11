@@ -1,7 +1,13 @@
 import OpenAI from "openai";
 import sharp from "sharp";
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+let client: OpenAI | null = null;
+const getClient = (): OpenAI => {
+  const key = process.env.OPENAI_API_KEY;
+  if (!key) throw new Error("OPENAI_API_KEY is not configured");
+  client ??= new OpenAI({ apiKey: key });
+  return client;
+};
 
 const systemPrompt = `Create a Telegram channel cover.
 Dimensions target: EXACTLY 1280x640 pixels after processing.
@@ -41,7 +47,7 @@ export const generateChannelCover = async (
   style: string,
   quality: "standard" | "hd" = "standard"
 ): Promise<Buffer> => {
-  const result = await client.images.generate({
+  const result = await getClient().images.generate({
     model: "dall-e-3",
     prompt: `${systemPrompt}\nStyle: ${style}\n\nUser request: ${prompt}`,
     size: "1792x1024",

@@ -15,7 +15,15 @@ app.use(express.json({ limit: "2mb" }));
 app.use("/generated", express.static(path.resolve(process.cwd(), "generated")));
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
-app.post(`/webhook/${process.env.TELEGRAM_WEBHOOK_SECRET}`, telegramWebhookHandler);
+
+const webhookSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
+if (webhookSecret) {
+  app.post(`/webhook/${webhookSecret}`, telegramWebhookHandler);
+} else {
+  app.post("/webhook/disabled", (_req, res) =>
+    res.status(503).json({ error: "TELEGRAM_WEBHOOK_SECRET is not configured" })
+  );
+}
 
 app.use("/api/templates", templatesRoute);
 app.use("/api/user", userRoute);
