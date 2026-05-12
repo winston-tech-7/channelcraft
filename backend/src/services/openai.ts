@@ -54,9 +54,19 @@ export const generateChannelCover = async (
     quality
   });
 
-  const b64 = result.data?.[0]?.b64_json;
-  if (!b64) throw new Error("DALL-E returned empty image payload");
+  const firstImage = result.data?.[0];
+  let rawBuffer: Buffer | null = null;
 
-  const rawBuffer = Buffer.from(b64, "base64");
+  if (firstImage?.b64_json) {
+    rawBuffer = Buffer.from(firstImage.b64_json, "base64");
+  } else if (firstImage?.url) {
+    const response = await fetch(firstImage.url);
+    if (!response.ok) {
+      throw new Error(`Failed to download generated image: HTTP ${response.status}`);
+    }
+    rawBuffer = Buffer.from(await response.arrayBuffer());
+  }
+
+  if (!rawBuffer) throw new Error("DALL-E returned empty image payload");
   return cropToTelegramCover(rawBuffer);
 };
