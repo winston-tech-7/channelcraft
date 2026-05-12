@@ -19,5 +19,11 @@ export const api = {
       throw new Error(err.error || "Generation failed");
     }
     return res.json();
+  },
+  gallery: async (telegramId: number): Promise<string[]> => {
+    const res = await fetch(`${API_URL}/api/user/${telegramId}/designs`);
+    if (!res.ok) throw new Error("Failed to load gallery");
+    const data = await res.json();
+    return (data.designs || []).map((design: { image_url: string }) => design.image_url);
   }
 };
