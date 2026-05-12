@@ -2,6 +2,11 @@ import { GeneratePayload, GenerateResponse } from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
+export type GalleryDesign = {
+  id: number;
+  image_url: string;
+};
+
 export const api = {
   templates: async (): Promise<Record<string, string>> => {
     const res = await fetch(`${API_URL}/api/templates`);
@@ -20,10 +25,10 @@ export const api = {
     }
     return res.json();
   },
-  gallery: async (telegramId: number): Promise<string[]> => {
+  gallery: async (telegramId: number): Promise<GalleryDesign[]> => {
     const res = await fetch(`${API_URL}/api/user/${telegramId}/designs`);
     if (!res.ok) throw new Error("Failed to load gallery");
     const data = await res.json();
-    return (data.designs || []).map((design: { image_url: string }) => design.image_url);
+    return data.designs || [];
   }
 };
