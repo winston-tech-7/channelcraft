@@ -8,6 +8,11 @@ export type GalleryDesign = {
 };
 
 export const api = {
+  meta: async (): Promise<{ botUsername: string }> => {
+    const res = await fetch(`${API_URL}/api/meta`);
+    if (!res.ok) return { botUsername: "" };
+    return res.json();
+  },
   templates: async (): Promise<Record<string, string>> => {
     const res = await fetch(`${API_URL}/api/templates`);
     const data = await res.json();

@@ -5,6 +5,7 @@ import path from "path";
 import templatesRoute from "./api/routes/templates.js";
 import userRoute from "./api/routes/user.js";
 import generateRoute from "./api/routes/generate.js";
+import metaRoute from "./api/routes/meta.js";
 import { telegramWebhookHandler } from "./bot/index.js";
 
 const app = express();
@@ -26,6 +27,7 @@ if (webhookSecret) {
 }
 
 app.use("/api/templates", templatesRoute);
+app.use("/api/meta", metaRoute);
 app.use("/api/user", userRoute);
 app.use("/api/generate", generateRoute);
 

@@ -8,7 +8,18 @@ export const Gallery = () => {
   const effectiveUserId = userId || 1;
   const [items, setItems] = useState<GalleryDesign[]>([]);
   const [loading, setLoading] = useState(true);
-  const botUsername = (import.meta.env.VITE_BOT_USERNAME as string | undefined)?.replace("@", "");
+  const [botUsername, setBotUsername] = useState<string | undefined>(() =>
+    (import.meta.env.VITE_BOT_USERNAME as string | undefined)?.replace("@", "").trim() || undefined
+  );
+
+  useEffect(() => {
+    if (!botUsername) {
+      api.meta().then((m) => {
+        const u = m.botUsername?.replace("@", "").trim();
+        if (u) setBotUsername(u);
+      });
+    }
+  }, [botUsername]);
 
   useEffect(() => {
     api
@@ -33,9 +44,9 @@ export const Gallery = () => {
           />
         ))
       )}
-      {!botUsername && (
+      {!loading && items.length > 0 && !botUsername && (
         <p style={{ marginTop: 12, fontSize: 13 }}>
-          To enable HD purchase buttons in gallery, set <code>VITE_BOT_USERNAME</code> in frontend environment.
+          HD links need a bot username. Set <code>TELEGRAM_BOT_USERNAME</code> on the server or <code>VITE_BOT_USERNAME</code> on Vercel, or ensure <code>TELEGRAM_BOT_TOKEN</code> is valid (we try getMe automatically).
         </p>
       )}
     </div>
