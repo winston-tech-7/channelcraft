@@ -17,13 +17,14 @@ export const Create = () => {
   const [style, setStyle] = useState("");
   const [loading, setLoading] = useState(false);
   const [variants, setVariants] = useState<string[]>([]);
-  const canGenerate = useMemo(() => prompt.trim().length > 1 && !!template && !!userId, [prompt, template, userId]);
+  const effectiveUserId = userId || 1;
+  const canGenerate = useMemo(() => prompt.trim().length > 1 && !!template, [prompt, template]);
 
   const runGenerate = async () => {
     if (!canGenerate) return;
     setLoading(true);
     try {
-      const data = await api.generate({ telegramId: userId, template, prompt, style });
+      const data = await api.generate({ telegramId: effectiveUserId, template, prompt, style });
       setVariants(data.variants);
     } catch (error) {
       alert(error instanceof Error ? error.message : "Generation failed");
@@ -44,6 +45,11 @@ export const Create = () => {
   return (
     <div style={{ padding: 16, display: "grid", gap: 12 }}>
       <h2>Create Cover</h2>
+      {!userId && (
+        <div style={{ background: "#fff7d1", borderRadius: 8, padding: 8, fontSize: 13 }}>
+          Opened outside Telegram: running in test mode.
+        </div>
+      )}
       <TemplateGrid templates={templates} selected={template} onSelect={setTemplate} />
       <GenerationForm value={prompt} style={style} onValueChange={setPrompt} onStyleChange={setStyle} />
       <button onClick={runGenerate} disabled={!canGenerate || loading}>
