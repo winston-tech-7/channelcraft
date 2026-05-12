@@ -13,7 +13,8 @@ export const handleStart = async (ctx: any): Promise<void> => {
         "Unwatermarked 1280x640 HD cover",
         createHdPayload(id),
         "XTR",
-        [{ label: "HD version", amount: PAYMENT_PRICES.hdSingle }]
+        [{ label: "HD version", amount: PAYMENT_PRICES.hdSingle }],
+        { provider_token: "" }
       );
       return;
     }

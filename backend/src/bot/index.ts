@@ -41,7 +41,8 @@ const buildWebhookHandler = (): RequestHandler => {
       "Unwatermarked 1280x640 HD cover",
       createHdPayload(id),
       "XTR",
-      [{ label: "HD version", amount: PAYMENT_PRICES.hdSingle }]
+      [{ label: "HD version", amount: PAYMENT_PRICES.hdSingle }],
+      { provider_token: "" }
     );
   });
 
@@ -53,7 +54,8 @@ const buildWebhookHandler = (): RequestHandler => {
       "Unlimited generations and exclusive templates",
       createProPayload(),
       "XTR",
-      [{ label: "Pro monthly", amount: PAYMENT_PRICES.proMonthly }]
+      [{ label: "Pro monthly", amount: PAYMENT_PRICES.proMonthly }],
+      { provider_token: "" }
     );
   });
 
